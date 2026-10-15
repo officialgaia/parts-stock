@@ -1,0 +1,511 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>部品ストック</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: 部品棚の引き出しラベルを並べた一覧。上に集計、下に検索とカテゴリ、行ごとに在庫ステッパー */
+:root{
+  --bg:#edf1ee; --panel:#ffffff; --sunk:#f5f7f5;
+  --ink:#15201b; --muted:#5a6a62; --line:#d2dad5;
+  --mask:#0f5c45; --mask-ink:#ffffff; --mask-soft:#dcebe4;
+  --copper:#a95a22;
+  --warn:#9a6212; --warn-bg:#fbefd6;
+  --danger:#b42318; --danger-bg:#fde7e4;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1412; --panel:#151d1a; --sunk:#111816;
+  --ink:#e3ebe6; --muted:#93a39b; --line:#29342f;
+  --mask:#4cb38f; --mask-ink:#06150f; --mask-soft:#1b3129;
+  --copper:#de9a63;
+  --warn:#e6b450; --warn-bg:#352a12;
+  --danger:#f2857a; --danger-bg:#3a1714;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1412; --panel:#151d1a; --sunk:#111816;
+  --ink:#e3ebe6; --muted:#93a39b; --line:#29342f;
+  --mask:#4cb38f; --mask-ink:#06150f; --mask-soft:#1b3129;
+  --copper:#de9a63;
+  --warn:#e6b450; --warn-bg:#352a12;
+  --danger:#f2857a; --danger-bg:#3a1714;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--mask);outline-offset:2px}
+
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.brand h1{margin:0;font-size:1.7rem;font-weight:700;letter-spacing:.02em;text-wrap:balance}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:6px 12px;min-width:92px}
+.stat b{display:block;font-family:var(--f-mono);font-size:1.25rem;font-weight:600;font-variant-numeric:tabular-nums}
+.stat span{font-size:.72rem;color:var(--muted);letter-spacing:.06em}
+button.stat{text-align:left}
+button.stat.on{border-color:var(--warn);background:var(--warn-bg)}
+button.stat.low b{color:var(--warn)}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:0 10px}
+.search input{border:0;background:transparent;padding:9px 0;width:100%;min-width:0;outline:none}
+.search svg{flex:none;color:var(--muted)}
+select.sort{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);padding:8px 14px;font-weight:500}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--mask);border-color:var(--mask);color:var(--mask-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.danger.armed{background:var(--danger);color:var(--panel)}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px 4px 9px;font-size:.8rem;color:var(--muted)}
+.chip.on{border-color:var(--mask);background:var(--mask-soft);color:var(--ink)}
+.chip .n{font-family:var(--f-mono);font-size:.72rem}
+.band{width:10px;height:10px;border-radius:2px;border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);flex:none}
+
+.list{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1.4fr) minmax(0,.8fr) minmax(0,1fr) 150px;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row.head{background:var(--sunk);font-size:.72rem;color:var(--muted);letter-spacing:.08em;padding-block:7px}
+.part{display:flex;gap:10px;align-items:flex-start;min-width:0;text-align:left;border:0;background:none;padding:0}
+.part .band{margin-top:5px}
+.part .nm{font-weight:500;overflow-wrap:anywhere}
+.part .cat{display:block;font-size:.74rem;color:var(--muted)}
+.part:hover .nm{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.mono{font-family:var(--f-mono);font-size:.85rem;overflow-wrap:anywhere;min-width:0}
+.pkg{color:var(--muted)}
+.loc{display:inline-block;font-family:var(--f-mono);font-size:.78rem;border:1px solid var(--line);background:var(--sunk);border-radius:3px;padding:1px 7px;overflow-wrap:anywhere;max-width:100%}
+.loc:empty{display:none}
+.qty{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.qty button{width:30px;height:30px;border:1px solid var(--line);background:var(--sunk);border-radius:var(--r);font-family:var(--f-mono);font-size:1rem;line-height:1}
+.qty button:hover{border-color:var(--mask);color:var(--mask)}
+.qty output{min-width:54px;text-align:right;font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:1rem}
+.qty output small{font-family:var(--f-body);font-weight:400;font-size:.7rem;color:var(--muted);margin-left:2px}
+.row.low .qty output{color:var(--warn)}
+.row.zero .qty output{color:var(--danger)}
+.flag{font-size:.68rem;font-weight:500;border-radius:3px;padding:0 5px;margin-left:6px;vertical-align:1px}
+.row.low .flag{background:var(--warn-bg);color:var(--warn)}
+.row.zero .flag{background:var(--danger-bg);color:var(--danger)}
+.lbl{display:none}
+body.ro #addBtn, body.ro #bulkBtn, body.ro .qty button, body.ro [data-act="add"], body.ro [data-act="bulk"]{display:none}
+body.ro .part{cursor:default}
+body.ro .part:hover .nm{text-decoration:none}
+
+.empty{padding:40px 24px;text-align:center;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty h2{margin:0;color:var(--ink);font-size:1.05rem}
+.empty p{margin:0;max-width:52ch}
+.empty .eg{font-family:var(--f-mono);font-size:.8rem;background:var(--sunk);border:1px dashed var(--line);border-radius:var(--r);padding:10px 14px;text-align:left;white-space:pre-wrap;max-width:100%}
+
+.foot{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem}
+.status{display:inline-flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--mask)}
+.dot.bad{background:var(--danger)}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:0}
+
+/* Sheet (編集パネル) */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 40%,transparent);display:flex;align-items:flex-start;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));overflow-y:auto;z-index:10}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:10px;width:100%;max-width:560px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 50px color-mix(in srgb,var(--ink) 25%,transparent)}
+.sheet h2{margin:0;font-size:1.1rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f.full{grid-column:1/-1}
+.f label{font-size:.75rem;color:var(--muted);letter-spacing:.04em}
+.f input,.f select,.f textarea{border:1px solid var(--line);background:var(--sunk);border-radius:var(--r);padding:8px 10px;width:100%;min-width:0}
+.f textarea{resize:vertical;min-height:64px}
+.f input.mono{font-family:var(--f-mono)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+.actions .r{display:flex;gap:8px;margin-left:auto}
+.err{color:var(--danger);font-size:.8rem;margin:0}
+.hint{font-size:.78rem;color:var(--muted);margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:.85rem;z-index:20}
+
+@media (max-width:760px){
+  .row.head{display:none}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"part qty" "meta meta";row-gap:6px}
+  .row .part{grid-area:part}
+  .row .qty{grid-area:qty}
+  .row .meta-wrap{grid-area:meta;display:flex;flex-wrap:wrap;gap:4px 12px;padding-left:20px}
+  .row .meta-wrap>*{min-width:0}
+}
+@media (min-width:761px){ .row .meta-wrap{display:contents} }
+@media (prefers-reduced-motion:no-preference){ .toast{animation:up .18s ease-out} @keyframes up{from{opacity:0;transform:translate(-50%,6px)}} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>部品ストック</h1>
+      <p>手持ちの電子部品の在庫台帳</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="sItems">–</b><span>品目</span></div>
+      <div class="stat"><b id="sTotal">–</b><span>合計数量</span></div>
+      <button class="stat low" id="sLowBtn" type="button" aria-pressed="false"><b id="sLow">–</b><span>残りわずか</span></button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="部品名・型番・場所で検索（例: 10k, ESP32, 棚A）" autocomplete="off">
+    </label>
+    <select class="sort" id="sort" aria-label="並び順">
+      <option value="cat">カテゴリ順</option>
+      <option value="name">名前順</option>
+      <option value="qtyAsc">在庫が少ない順</option>
+      <option value="recent">最近更新した順</option>
+      <option value="loc">保管場所順</option>
+    </select>
+    <button class="btn" id="bulkBtn" type="button">まとめて追加</button>
+    <button class="btn primary" id="addBtn" type="button">＋ 部品を追加</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="list" id="list">
+    <div class="empty"><h2>読み込み中…</h2></div>
+  </div>
+
+  <div class="foot">
+    <span class="status"><span class="dot" id="dot"></span><span id="statusText">接続中</span></span>
+    <button class="linkbtn" id="csvBtn" type="button">CSVをコピー</button>
+  </div>
+</div>
+
+<div class="scrim" id="editScrim" hidden>
+  <form class="sheet" id="editForm" novalidate>
+    <h2 id="editTitle">部品を追加</h2>
+    <div class="grid">
+      <div class="f full"><label for="fName">部品名 *</label><input id="fName" required placeholder="例: 炭素皮膜抵抗 / ESP32-DevKitC / タクトスイッチ"></div>
+      <div class="f"><label for="fCat">カテゴリ</label><select id="fCat"></select></div>
+      <div class="f"><label for="fSpec">値・型番</label><input id="fSpec" class="mono" placeholder="例: 10kΩ 1/4W, 100µF 25V, 2SC1815"></div>
+      <div class="f"><label for="fPkg">形状・パッケージ</label><input id="fPkg" class="mono" placeholder="例: リード, DIP-8, 0805, モジュール"></div>
+      <div class="f"><label for="fLoc">保管場所</label><input id="fLoc" class="mono" list="locList" placeholder="例: 棚A-3, 青ケース"><datalist id="locList"></datalist></div>
+      <div class="f"><label for="fQty">数量</label><input id="fQty" type="number" min="0" step="1" inputmode="numeric" value="1"></div>
+      <div class="f"><label for="fUnit">単位</label><select id="fUnit"><option>個</option><option>本</option><option>枚</option><option>m</option><option>セット</option><option>袋</option></select></div>
+      <div class="f"><label for="fMin">これ以下で「残りわずか」</label><input id="fMin" type="number" min="0" step="1" inputmode="numeric" placeholder="未設定"></div>
+      <div class="f"><label for="fLink">データシート・購入先URL</label><input id="fLink" type="url" placeholder="https://"></div>
+      <div class="f full"><label for="fNote">メモ</label><textarea id="fNote" placeholder="例: 秋月で購入。DualSenseスタンドで2個使用予定"></textarea></div>
+    </div>
+    <p class="err" id="editErr" hidden></p>
+    <div class="actions">
+      <button class="btn danger" type="button" id="delBtn" hidden>削除</button>
+      <div class="r">
+        <button class="btn" type="button" id="cancelBtn">キャンセル</button>
+        <button class="btn primary" type="submit" id="saveBtn">保存</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="scrim" id="bulkScrim" hidden>
+  <form class="sheet" id="bulkForm" novalidate>
+    <h2>まとめて追加</h2>
+    <p class="hint">1行に1部品。カンマかタブ区切りで「部品名, 数量, カテゴリ, 値・型番, 保管場所」の順に書きます。数量以降は省略できます。表計算ソフトからの貼り付けもそのまま使えます。</p>
+    <div class="f full"><label for="bulkText">部品リスト</label><textarea id="bulkText" rows="9" class="mono" placeholder="炭素皮膜抵抗, 50, 抵抗, 10kΩ 1/4W, 棚A-1&#10;電解コンデンサ, 20, コンデンサ, 100µF 25V, 棚A-2&#10;Arduino Nano, 2, IC・マイコン, ATmega328P, 青ケース"></textarea></div>
+    <p class="err" id="bulkErr" hidden></p>
+    <div class="actions"><div class="r">
+      <button class="btn" type="button" id="bulkCancel">キャンセル</button>
+      <button class="btn primary" type="submit" id="bulkSave">追加する</button>
+    </div></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  const CATS = [
+    {k:"抵抗",c:"#7a4a26"},
+    {k:"コンデンサ",c:"#c8322b"},
+    {k:"ダイオード・トランジスタ",c:"#e07b22"},
+    {k:"IC・マイコン",c:"#e3c22b"},
+    {k:"LED・ディスプレイ",c:"#2f9a5a"},
+    {k:"センサ",c:"#2f6fc4"},
+    {k:"モジュール・基板",c:"#7d4fb8"},
+    {k:"コネクタ・配線",c:"#8b9191"},
+    {k:"スイッチ・入力",c:"#f4f4f0"},
+    {k:"電源・電池",c:"#1c1c1c"},
+    {k:"モーター・駆動",c:"#b8733b"},
+    {k:"機構・ネジ",c:"#5f7d86"},
+    {k:"工具・消耗品",c:"#a5a07a"},
+    {k:"その他",c:"transparent"}
+  ];
+  const catColor = k => (CATS.find(c=>c.k===k)||{c:"transparent"}).c;
+  const catIndex = k => { const i = CATS.findIndex(c=>c.k===k); return i<0?99:i; };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s==null?"":s).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+
+  let db = null, col = null, parts = [], loaded = false, canWrite = true, readOnly = false;
+  let filterCat = "", lowOnly = false;
+  const pending = {}; // id -> {qty, timer, chain}
+
+  try { const s = localStorage.getItem("ps.sort"); if (s) $("sort").value = s; } catch(e){}
+
+  // カテゴリ選択肢
+  $("fCat").innerHTML = CATS.map(c=>`<option>${esc(c.k)}</option>`).join("");
+
+  function isLow(p){ const q = qtyOf(p); if (q<=0) return "zero"; const m = Number(p.minQty); return (Number.isFinite(m) && p.minQty!==null && p.minQty!=="" && q<=m) ? "low" : ""; }
+  function qtyOf(p){ return pending[p.id] && pending[p.id].qty!=null ? pending[p.id].qty : (Number(p.qty)||0); }
+
+  function setStatus(kind, text){ $("dot").className = "dot " + (kind||""); $("statusText").textContent = text; }
+  let toastT; function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2200); }
+
+  function renderStats(){
+    $("sItems").textContent = loaded ? parts.length : "–";
+    $("sTotal").textContent = loaded ? parts.reduce((a,p)=>a+qtyOf(p),0).toLocaleString("ja-JP") : "–";
+    $("sLow").textContent = loaded ? parts.filter(p=>isLow(p)).length : "–";
+    $("sLowBtn").classList.toggle("on", lowOnly);
+    $("sLowBtn").setAttribute("aria-pressed", lowOnly);
+  }
+
+  function renderChips(){
+    const counts = {};
+    parts.forEach(p=>{ const k=p.category||"その他"; counts[k]=(counts[k]||0)+1; });
+    const keys = CATS.map(c=>c.k).filter(k=>counts[k]);
+    Object.keys(counts).forEach(k=>{ if(!keys.includes(k)) keys.push(k); });
+    let html = `<button type="button" class="chip ${filterCat===""?"on":""}" data-cat="">すべて <span class="n">${parts.length}</span></button>`;
+    html += keys.map(k=>`<button type="button" class="chip ${filterCat===k?"on":""}" data-cat="${esc(k)}"><span class="band" style="background:${catColor(k)}"></span>${esc(k)} <span class="n">${counts[k]}</span></button>`).join("");
+    $("chips").innerHTML = html;
+  }
+
+  function visible(){
+    const q = $("q").value.trim().toLowerCase();
+    const terms = q.split(/\s+/).filter(Boolean);
+    let arr = parts.filter(p=>{
+      if (filterCat && (p.category||"その他")!==filterCat) return false;
+      if (lowOnly && !isLow(p)) return false;
+      if (!terms.length) return true;
+      const hay = [p.name,p.spec,p.package,p.location,p.category,p.notes].join(" ").toLowerCase();
+      return terms.every(t=>hay.includes(t));
+    });
+    const s = $("sort").value;
+    const byName = (a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ja");
+    arr.sort({
+      cat:(a,b)=>catIndex(a.category)-catIndex(b.category)||byName(a,b),
+      name:byName,
+      qtyAsc:(a,b)=>qtyOf(a)-qtyOf(b)||byName(a,b),
+      recent:(a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")),
+      loc:(a,b)=>String(a.location||"￿").localeCompare(String(b.location||"￿"),"ja")||byName(a,b)
+    }[s]||byName);
+    return arr;
+  }
+
+  function renderList(){
+    const list = $("list");
+    if (!loaded) return;
+    if (!parts.length){
+      list.innerHTML = `<div class="empty">
+        <h2>まだ部品が登録されていません</h2>
+        <p>「＋ 部品を追加」で1つずつ、または「まとめて追加」でリストを貼り付けて登録できます。チャットで Claude に手持ちの部品を伝えて、代わりに登録してもらうこともできます。</p>
+        <div class="eg">炭素皮膜抵抗, 50, 抵抗, 10kΩ 1/4W, 棚A-1
+タクトスイッチ, 12, スイッチ・入力, 6×6mm, 棚B-2</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button class="btn" type="button" data-act="bulk">まとめて追加</button>
+          <button class="btn primary" type="button" data-act="add">＋ 部品を追加</button>
+        </div></div>`;
+      return;
+    }
+    const arr = visible();
+    if (!arr.length){
+      list.innerHTML = `<div class="empty"><h2>条件に合う部品がありません</h2><p>検索語やカテゴリの絞り込みを外してみてください。</p></div>`;
+      return;
+    }
+    let html = `<div class="row head"><span>部品</span><span>値・型番</span><span>形状</span><span>保管場所</span><span style="text-align:right">在庫</span></div>`;
+    html += arr.map(p=>{
+      const lv = isLow(p);
+      const flag = lv==="zero" ? `<span class="flag">在庫切れ</span>` : lv==="low" ? `<span class="flag">残りわずか</span>` : "";
+      const cat = p.category||"その他";
+      return `<div class="row ${lv}" data-id="${esc(p.id)}">
+        <button type="button" class="part" data-act="edit" title="編集"><span class="band" style="background:${catColor(cat)}"></span><span><span class="nm">${esc(p.name)}</span>${flag}<span class="cat">${esc(cat)}</span></span></button>
+        <div class="meta-wrap">
+          <span class="mono">${esc(p.spec||"")}</span>
+          <span class="mono pkg">${esc(p.package||"")}</span>
+          <span><span class="loc">${esc(p.location||"")}</span></span>
+        </div>
+        <div class="qty">
+          <button type="button" data-act="dec" aria-label="${esc(p.name)} を1減らす">−</button>
+          <output>${qtyOf(p).toLocaleString("ja-JP")}<small>${esc(p.unit||"個")}</small></output>
+          <button type="button" data-act="inc" aria-label="${esc(p.name)} を1増やす">＋</button>
+        </div>
+      </div>`;
+    }).join("");
+    list.innerHTML = html;
+  }
+
+  function render(){ renderStats(); renderChips(); renderList(); renderLocs(); }
+  function renderLocs(){
+    const locs = [...new Set(parts.map(p=>p.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
+    $("locList").innerHTML = locs.map(l=>`<option value="${esc(l)}"></option>`).join("");
+  }
+
+  // 在庫の増減（連打はまとめて1回の書き込み）
+  function bump(id, d){
+    if (!col) return;
+    const p = parts.find(x=>x.id===id); if (!p) return;
+    const st = pending[id] || (pending[id] = {qty:null, timer:null, chain:Promise.resolve()});
+    st.qty = Math.max(0, qtyOf(p) + d);
+    render();
+    clearTimeout(st.timer);
+    st.timer = setTimeout(()=>{
+      const v = st.qty;
+      st.chain = st.chain.then(()=>col.doc(id).update({qty:v, updatedAt:new Date().toISOString()}))
+        .then(()=>{ if (st.qty===v){ delete pending[id]; } })
+        .catch(e=>{ delete pending[id]; render(); toast(writeErr(e)); });
+    }, 600);
+  }
+
+  function writeErr(e){
+    const c = e && e.code;
+    if (c==="invalid_argument"){ canWrite=false; return "この画面では編集できません（閲覧のみの権限です）"; }
+    if (c==="quota_exceeded") return "保存容量の上限に達しました。不要な部品を削除してください";
+    if (c==="resource_exhausted") return "操作が多すぎます。少し待ってからもう一度試してください";
+    return "保存できませんでした。通信状態を確認してもう一度試してください";
+  }
+
+  // 編集パネル
+  let editingId = null, delArmed = false;
+  function openEdit(p){
+    editingId = p ? p.id : null; delArmed = false;
+    $("editTitle").textContent = p ? "部品を編集" : "部品を追加";
+    $("fName").value = p ? p.name||"" : "";
+    $("fCat").value = p && p.category ? p.category : (filterCat||CATS[0].k);
+    if (p && p.category && !CATS.some(c=>c.k===p.category)) { const o=document.createElement("option"); o.textContent=p.category; $("fCat").appendChild(o); $("fCat").value=p.category; }
+    $("fSpec").value = p ? p.spec||"" : "";
+    $("fPkg").value = p ? p.package||"" : "";
+    $("fLoc").value = p ? p.location||"" : "";
+    $("fQty").value = p ? qtyOf(p) : 1;
+    $("fUnit").value = p && p.unit ? p.unit : "個";
+    $("fMin").value = p && p.minQty!=null && p.minQty!=="" ? p.minQty : "";
+    $("fLink").value = p ? p.link||"" : "";
+    $("fNote").value = p ? p.notes||"" : "";
+    $("delBtn").hidden = !p; $("delBtn").textContent="削除"; $("delBtn").classList.remove("armed");
+    $("editErr").hidden = true;
+    $("editScrim").hidden = false;
+    setTimeout(()=>$("fName").focus(),30);
+  }
+  function closeEdit(){ $("editScrim").hidden = true; editingId=null; }
+
+  $("editForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const name = $("fName").value.trim();
+    if (!name){ $("editErr").textContent="部品名を入力してください"; $("editErr").hidden=false; $("fName").focus(); return; }
+    if (!col){ $("editErr").textContent="保存先に接続できていません。ページを開き直してください"; $("editErr").hidden=false; return; }
+    const minRaw = $("fMin").value.trim();
+    const data = {
+      name, category:$("fCat").value, spec:$("fSpec").value.trim(), package:$("fPkg").value.trim(),
+      location:$("fLoc").value.trim(), qty:Math.max(0, parseInt($("fQty").value,10)||0), unit:$("fUnit").value,
+      minQty: minRaw===""?null:Math.max(0,parseInt(minRaw,10)||0), link:$("fLink").value.trim(), notes:$("fNote").value.trim(),
+      updatedAt:new Date().toISOString()
+    };
+    $("saveBtn").disabled = true;
+    try{
+      if (editingId){ delete pending[editingId]; await col.doc(editingId).update(data); toast("保存しました"); }
+      else { data.createdAt = data.updatedAt; await col.add(data); toast("追加しました"); }
+      closeEdit();
+    }catch(err){ $("editErr").textContent = writeErr(err); $("editErr").hidden=false; }
+    finally{ $("saveBtn").disabled=false; }
+  });
+  $("cancelBtn").onclick = closeEdit;
+  $("delBtn").onclick = async ()=>{
+    if (!delArmed){ delArmed=true; $("delBtn").textContent="もう一度押すと削除"; $("delBtn").classList.add("armed"); return; }
+    try{ await col.doc(editingId).delete(); toast("削除しました"); closeEdit(); }
+    catch(err){ $("editErr").textContent = writeErr(err); $("editErr").hidden=false; }
+  };
+
+  // まとめて追加
+  function openBulk(){ $("bulkErr").hidden=true; $("bulkScrim").hidden=false; setTimeout(()=>$("bulkText").focus(),30); }
+  $("bulkCancel").onclick = ()=>{ $("bulkScrim").hidden=true; };
+  $("bulkForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    if (!col){ $("bulkErr").textContent="保存先に接続できていません"; $("bulkErr").hidden=false; return; }
+    const lines = $("bulkText").value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    if (!lines.length){ $("bulkErr").textContent="部品を1行以上入力してください"; $("bulkErr").hidden=false; return; }
+    const rows = lines.map(l=>l.split(/\t|,|、|，/).map(s=>s.trim()));
+    $("bulkSave").disabled = true;
+    let ok = 0;
+    try{
+      for (const r of rows){
+        if (!r[0]) continue;
+        const now = new Date().toISOString();
+        const cat = r[2] ? (CATS.find(c=>c.k===r[2]||c.k.includes(r[2]))||{k:r[2]}).k : "その他";
+        await col.add({name:r[0], qty:Math.max(0,parseInt(r[1],10)||0), category:cat, spec:r[3]||"", location:r[4]||"", package:"", unit:"個", minQty:null, link:"", notes:"", createdAt:now, updatedAt:now});
+        ok++;
+      }
+      $("bulkText").value=""; $("bulkScrim").hidden=true; toast(`${ok}件追加しました`);
+    }catch(err){ $("bulkErr").textContent = `${ok}件追加したところで止まりました。` + writeErr(err); $("bulkErr").hidden=false; }
+    finally{ $("bulkSave").disabled=false; }
+  });
+
+  // CSVコピー
+  $("csvBtn").onclick = ()=>{
+    const head = ["部品名","カテゴリ","値・型番","形状","保管場所","数量","単位","下限","URL","メモ"];
+    const q = v=>{ const s=String(v==null?"":v); return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
+    const csv = [head.join(",")].concat(visible().map(p=>[p.name,p.category,p.spec,p.package,p.location,qtyOf(p),p.unit,p.minQty,p.link,p.notes].map(q).join(","))).join("\n");
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(csv).then(()=>toast("CSVをコピーしました")).catch(()=>toast("コピーできませんでした"));
+    } else toast("コピーできませんでした");
+  };
+
+  // イベント
+  document.addEventListener("click", e=>{
+    const a = e.target.closest("[data-act]");
+    if (a){
+      if (readOnly) return;
+      const act = a.dataset.act, row = a.closest(".row"), id = row && row.dataset.id;
+      if (act==="add") openEdit(null);
+      else if (act==="bulk") openBulk();
+      else if (act==="edit") openEdit(parts.find(p=>p.id===id));
+      else if (act==="inc") bump(id, 1);
+      else if (act==="dec") bump(id, -1);
+      return;
+    }
+    const chip = e.target.closest(".chip");
+    if (chip){ filterCat = chip.dataset.cat; render(); }
+  });
+  $("addBtn").onclick = ()=>openEdit(null);
+  $("bulkBtn").onclick = openBulk;
+  $("sLowBtn").onclick = ()=>{ lowOnly=!lowOnly; render(); };
+  $("q").addEventListener("input", renderList);
+  $("sort").addEventListener("change", ()=>{ try{localStorage.setItem("ps.sort",$("sort").value);}catch(e){} renderList(); });
+  document.addEventListener("keydown", e=>{ if (e.key==="Escape"){ $("editScrim").hidden=true; $("bulkScrim").hidden=true; } });
+  ["editScrim","bulkScrim"].forEach(id=>$(id).addEventListener("click", e=>{ if (e.target.id===id) $(id).hidden=true; }));
+
+  // 接続
+  async function start(){
+    try{ db = window.claude && window.claude.use ? await window.claude.use("db") : null; }catch(e){ db=null; }
+    if (!db){
+      // claude.ai の外（GitHub Pages など）では、リポジトリのバックアップを閲覧専用で表示する
+      try{
+        const res = await fetch("data/parts.json", {cache:"no-store"});
+        if (!res.ok) throw new Error(res.status);
+        const json = await res.json();
+        parts = (json.parts||[]).map(p=>Object.assign({}, p));
+        readOnly = true; document.body.classList.add("ro");
+        loaded = true; setStatus("", `閲覧専用・${json.exportedAt ? new Date(json.exportedAt).toLocaleDateString("ja-JP") : ""}時点のバックアップ`);
+        render(); return;
+      }catch(e){}
+      loaded = true; parts = []; setStatus("bad","保存先に接続できません（サインインして開いてください）");
+      render(); $("list").innerHTML = `<div class="empty"><h2>在庫データを読み込めません</h2><p>claude.ai にサインインした状態でこのページを開くと、在庫の表示と編集ができます。</p></div>`;
+      return;
+    }
+    col = db.collection("parts");
+    col.onSnapshot(snap=>{
+      parts = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      loaded = true; setStatus("ok", snap.metadata && snap.metadata.fromCache ? "同期中" : "保存済み・自動で同期");
+      render();
+    }, err=>{ setStatus("bad","同期が止まりました。ページを開き直してください"); });
+  }
+  start();
+})();
+</script>
+
+</body></html>

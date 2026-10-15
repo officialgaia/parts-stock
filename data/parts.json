@@ -1,0 +1,1016 @@
+{
+  "exportedAt": "2026-10-15T02:30:00Z",
+  "source": "https://claude.ai/artifact/VGvNWGs9um8YHkDYHopM64",
+  "count": 100,
+  "parts": [
+    {
+      "id": "r-10",
+      "category": "抵抗",
+      "name": "抵抗 10Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-100",
+      "category": "抵抗",
+      "name": "抵抗 100Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-100k",
+      "category": "抵抗",
+      "name": "抵抗 100kΩ",
+      "notes": "金属皮膜±1%×20本＋スターターキット付属×10本",
+      "package": "リード",
+      "qty": 30,
+      "spec": "1/4W",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-10k",
+      "category": "抵抗",
+      "name": "抵抗 10kΩ",
+      "notes": "金属皮膜±1%×20本＋スターターキット付属×10本",
+      "package": "リード",
+      "qty": 30,
+      "spec": "1/4W",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-150",
+      "category": "抵抗",
+      "name": "抵抗 150Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-1k",
+      "category": "抵抗",
+      "name": "抵抗 1kΩ",
+      "notes": "金属皮膜±1%×20本＋スターターキット付属×10本",
+      "package": "リード",
+      "qty": 30,
+      "spec": "1/4W",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-1m",
+      "category": "抵抗",
+      "name": "抵抗 1MΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-200",
+      "category": "抵抗",
+      "name": "抵抗 200Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-20k",
+      "category": "抵抗",
+      "name": "抵抗 20kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-22",
+      "category": "抵抗",
+      "name": "抵抗 22Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-220",
+      "category": "抵抗",
+      "name": "抵抗 220Ω",
+      "notes": "金属皮膜±1%×20本＋スターターキット付属×10本",
+      "package": "リード",
+      "qty": 30,
+      "spec": "1/4W",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-220k",
+      "category": "抵抗",
+      "name": "抵抗 220kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-270",
+      "category": "抵抗",
+      "name": "抵抗 270Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-2k",
+      "category": "抵抗",
+      "name": "抵抗 2kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-2k2",
+      "category": "抵抗",
+      "name": "抵抗 2.2kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-300",
+      "category": "抵抗",
+      "name": "抵抗 300Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-300k",
+      "category": "抵抗",
+      "name": "抵抗 300kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-3k3",
+      "category": "抵抗",
+      "name": "抵抗 3.3kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-47",
+      "category": "抵抗",
+      "name": "抵抗 47Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-470",
+      "category": "抵抗",
+      "name": "抵抗 470Ω",
+      "notes": "販売ページの表記は「4700R」。4.7kΩは別にあるため470Ωと判断。使う前にカラーコード（黄紫黒黒茶）で確認",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-470k",
+      "category": "抵抗",
+      "name": "抵抗 470kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-47k",
+      "category": "抵抗",
+      "name": "抵抗 47kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-4k7",
+      "category": "抵抗",
+      "name": "抵抗 4.7kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-510",
+      "category": "抵抗",
+      "name": "抵抗 510Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-51k",
+      "category": "抵抗",
+      "name": "抵抗 51kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-5k1",
+      "category": "抵抗",
+      "name": "抵抗 5.1kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-680",
+      "category": "抵抗",
+      "name": "抵抗 680Ω",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-680k",
+      "category": "抵抗",
+      "name": "抵抗 680kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-68k",
+      "category": "抵抗",
+      "name": "抵抗 68kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "r-6k8",
+      "category": "抵抗",
+      "name": "抵抗 6.8kΩ",
+      "package": "リード",
+      "qty": 20,
+      "spec": "1/4W ±1% 金属皮膜",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-0u22",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 0.22µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-0u47",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 0.47µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-100u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 100µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "16V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-10u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 10µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-1u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 1µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-220u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 220µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "16V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-22u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 22µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-2u2",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 2.2µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-33u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 33µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "16V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-470u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 470µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "16V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-47u",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 47µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "16V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "c-4u7",
+      "category": "コンデンサ",
+      "name": "電解コンデンサ 4.7µF",
+      "package": "リード",
+      "qty": 10,
+      "spec": "50V",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "esp32c3-supermini",
+      "category": "IC・マイコン",
+      "name": "ESP32-C3 SuperMini",
+      "notes": "書き込みはBOOTを押したままRESET→RESETを離す→BOOTを離す。ArduinoでUSB直結ならCDC On BootをON。外部電源は5Vピンに3.3〜6V（USBと同時使用不可）",
+      "package": "モジュール",
+      "qty": 12,
+      "spec": "ESP32-C3 Wi-Fi/BLE",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-3color-led",
+      "category": "LED・ディスプレイ",
+      "name": "3色LEDモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-bicolor-5mm",
+      "category": "LED・ディスプレイ",
+      "name": "2色LEDモジュール（5mm）",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-bicolor-small",
+      "category": "LED・ディスプレイ",
+      "name": "2色LEDモジュール（小型）",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-laser",
+      "category": "LED・ディスプレイ",
+      "name": "レーザー発光モジュール",
+      "notes": "37種センサキット。目に向けない",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-rgb",
+      "category": "LED・ディスプレイ",
+      "name": "RGB LEDモジュール",
+      "notes": "37種センサキット。リードLED型とチップLED型が1個ずつ",
+      "package": "4ピン基板",
+      "qty": 2,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "led-green",
+      "category": "LED・ディスプレイ",
+      "name": "LED 緑",
+      "notes": "スターターキット付属",
+      "package": "リード",
+      "qty": 5,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "led-red",
+      "category": "LED・ディスプレイ",
+      "name": "LED 赤",
+      "notes": "スターターキット付属",
+      "package": "リード",
+      "qty": 5,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "led-yellow",
+      "category": "LED・ディスプレイ",
+      "name": "LED 黄",
+      "notes": "スターターキット付属",
+      "package": "リード",
+      "qty": 5,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "tft-2in-st7789",
+      "category": "LED・ディスプレイ",
+      "name": "2.0インチ IPS TFT液晶",
+      "notes": "ピン: GND VCC SCL SDA RST DC CS BL",
+      "package": "8ピン GMT020-02",
+      "qty": 1,
+      "spec": "ST7789 240×320 SPI",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "cds-5516",
+      "category": "センサ",
+      "name": "フォトレジスタ（CdS）",
+      "notes": "スターターキット付属",
+      "package": "リード",
+      "qty": 2,
+      "spec": "5516",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "ir-rx-hx1838b",
+      "category": "センサ",
+      "name": "赤外線受信モジュール",
+      "notes": "VCC(5V) / GND / DO。受信角90°、動作2.7〜5.5V",
+      "package": "3ピン基板",
+      "qty": 4,
+      "spec": "HX1838B 38kHz",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-dht11",
+      "category": "センサ",
+      "name": "温湿度センサモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "spec": "DHT11",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-flame",
+      "category": "センサ",
+      "name": "炎センサモジュール",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-hall-analog",
+      "category": "センサ",
+      "name": "アナログホールセンサモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-hall-digital",
+      "category": "センサ",
+      "name": "ホール磁気センサモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-hall-linear",
+      "category": "センサ",
+      "name": "リニアホールセンサモジュール",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-heartbeat",
+      "category": "センサ",
+      "name": "心拍センサモジュール（指先）",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-ir-rx",
+      "category": "センサ",
+      "name": "赤外線受信モジュール（キット）",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-knock",
+      "category": "センサ",
+      "name": "ノックセンサモジュール",
+      "notes": "37種センサキット。販売ページでは見た目の違う3つに同じ名前が付いていたので、実物は別のモジュールが混ざっているかもしれない",
+      "package": "3ピン基板",
+      "qty": 3,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-light",
+      "category": "センサ",
+      "name": "光センサモジュール（フォトレジスタ）",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-line-tracker",
+      "category": "センサ",
+      "name": "ライントレースセンサモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-magic-cup",
+      "category": "センサ",
+      "name": "マジックライトカップモジュール",
+      "notes": "37種センサキット。2枚1組",
+      "package": "4ピン基板",
+      "qty": 2,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-mercury",
+      "category": "センサ",
+      "name": "水銀スイッチモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-mic-big",
+      "category": "センサ",
+      "name": "音センサモジュール（高感度）",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-mic-small",
+      "category": "センサ",
+      "name": "音センサモジュール（小型マイク）",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-obstacle",
+      "category": "センサ",
+      "name": "障害物検知モジュール（赤外線）",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-photo-interrupter",
+      "category": "センサ",
+      "name": "フォトインタラプタモジュール",
+      "notes": "37種センサキット（光遮断）。メダル通過検知などに使える",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-reed",
+      "category": "センサ",
+      "name": "リードスイッチモジュール",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-reed-mini",
+      "category": "センサ",
+      "name": "ミニリードスイッチモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-temp-analog",
+      "category": "センサ",
+      "name": "アナログ温度センサモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-temp-digital",
+      "category": "センサ",
+      "name": "デジタル温度センサモジュール",
+      "notes": "37種センサキット",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-tilt",
+      "category": "センサ",
+      "name": "傾斜スイッチモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-touch",
+      "category": "センサ",
+      "name": "タッチセンサモジュール",
+      "notes": "37種センサキット（人体接触）",
+      "package": "4ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-vibration",
+      "category": "センサ",
+      "name": "振動スイッチモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "breadboard-400",
+      "category": "モジュール・基板",
+      "name": "ブレッドボード",
+      "notes": "スターターキット付属",
+      "qty": 2,
+      "spec": "400穴",
+      "unit": "枚",
+      "updatedAt": "2026-10-15T02:12:02.887Z"
+    },
+    {
+      "id": "kit-relay",
+      "category": "モジュール・基板",
+      "name": "リレーモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "spec": "5V 1ch",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "pcb-4x6",
+      "category": "モジュール・基板",
+      "name": "ユニバーサル基板",
+      "qty": 3,
+      "spec": "4×6cm 両面 FR4",
+      "unit": "枚",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "rc522",
+      "category": "モジュール・基板",
+      "name": "RFIDリーダモジュール RC522",
+      "notes": "ISO14443A / MIFARE対応。S50カード・キーホルダー・ピンヘッダ付属",
+      "package": "モジュール",
+      "qty": 2,
+      "spec": "MFRC522 13.56MHz SPI",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "jumper-ff-10",
+      "category": "コネクタ・配線",
+      "name": "ジャンパワイヤ メス-メス",
+      "notes": "40本1束×2",
+      "qty": 80,
+      "spec": "10cm",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "jumper-mf-10",
+      "category": "コネクタ・配線",
+      "name": "ジャンパワイヤ オス-メス",
+      "notes": "40本1束×2",
+      "qty": 80,
+      "spec": "10cm",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "jumper-mm-10",
+      "category": "コネクタ・配線",
+      "name": "ジャンパワイヤ オス-オス",
+      "notes": "40本1束×2",
+      "qty": 80,
+      "spec": "10cm",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "jumper-mm-kit",
+      "category": "コネクタ・配線",
+      "name": "ジャンパワイヤ オス-オス（キット付属）",
+      "notes": "スターターキット付属。長さ未確認",
+      "qty": 20,
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kf301-4p",
+      "category": "コネクタ・配線",
+      "name": "端子台 KF301-4P",
+      "package": "基板用",
+      "qty": 5,
+      "spec": "4極 青",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "pinheader-1x40",
+      "category": "コネクタ・配線",
+      "name": "ピンヘッダ 1×40P",
+      "notes": "注文画面の数量（×7）で登録",
+      "qty": 7,
+      "spec": "2.54mm 単列 黒",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "pinheader-l-misc",
+      "category": "コネクタ・配線",
+      "name": "ピンヘッダ L型（付属品）",
+      "notes": "RC522付属",
+      "qty": 2,
+      "spec": "2.54mm",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "pinheader-straight-misc",
+      "category": "コネクタ・配線",
+      "name": "ピンヘッダ ストレート（付属品）",
+      "notes": "スターターキット付属×4＋RC522付属×2。長さはまちまち",
+      "qty": 6,
+      "spec": "2.54mm",
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "usb-cable-kit",
+      "category": "コネクタ・配線",
+      "name": "USBケーブル",
+      "notes": "スターターキット付属",
+      "qty": 1,
+      "unit": "本",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "ir-remote-kit",
+      "category": "スイッチ・入力",
+      "name": "赤外線リモコンセット",
+      "notes": "薄型リモコン（CR2025）＋受信モジュール。到達距離8m程度",
+      "qty": 1,
+      "spec": "NEC方式 17キー HX1838",
+      "unit": "セット",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-button",
+      "category": "スイッチ・入力",
+      "name": "ボタンスイッチモジュール",
+      "notes": "37種センサキット",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-encoder",
+      "category": "スイッチ・入力",
+      "name": "ロータリーエンコーダモジュール",
+      "notes": "37種センサキット",
+      "package": "5ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-joystick",
+      "category": "スイッチ・入力",
+      "name": "ジョイスティックモジュール",
+      "notes": "37種センサキット",
+      "package": "5ピン基板",
+      "qty": 1,
+      "spec": "XY 2軸＋押し込みボタン",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "tact-switch",
+      "category": "スイッチ・入力",
+      "name": "タクトスイッチ（キャップ付き）",
+      "notes": "スターターキット付属",
+      "package": "リード",
+      "qty": 6,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "snap-9v",
+      "category": "電源・電池",
+      "name": "9V電池スナップ",
+      "notes": "スターターキット付属",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-buzzer-active",
+      "category": "その他",
+      "name": "アクティブブザーモジュール",
+      "notes": "37種センサキット。電圧をかけるだけで鳴る",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "kit-buzzer-passive",
+      "category": "その他",
+      "name": "パッシブブザーモジュール",
+      "notes": "37種センサキット。音程を鳴らせる（PWM駆動）",
+      "package": "3ピン基板",
+      "qty": 1,
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "s50-card",
+      "category": "その他",
+      "name": "MIFARE S50 カード",
+      "notes": "RC522付属",
+      "qty": 2,
+      "spec": "13.56MHz 空白カード",
+      "unit": "枚",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    },
+    {
+      "id": "s50-fob",
+      "category": "その他",
+      "name": "MIFARE S50 キーホルダー型タグ",
+      "notes": "RC522付属",
+      "qty": 2,
+      "spec": "13.56MHz",
+      "unit": "個",
+      "updatedAt": "2026-10-15T02:10:00.000Z"
+    }
+  ]
+}
