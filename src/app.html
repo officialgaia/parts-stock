@@ -1,0 +1,584 @@
+<title>部品ストック</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: 部品棚。上に在庫の構成バー（カテゴリ別の割合）と絞り込み、下にカテゴリごとの引き出し（見出しが上に貼り付く）。抵抗は実物どおりのカラーコードで描く */
+:root{
+  --bg:#eceff0; --panel:#ffffff; --sunk:#f4f6f6; --rule:#d5dbdb;
+  --ink:#142019; --muted:#5b6a64; --faint:#8a9893;
+  --mask:#11583f; --mask-ink:#ffffff; --mask-soft:#dbeae3;
+  --copper:#a85b25; --lead:#9aa3a2;
+  --warn:#9a6212; --warn-bg:#fbefd6;
+  --danger:#b42318; --danger-bg:#fde7e4;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1311; --panel:#141c19; --sunk:#101715; --rule:#26312d;
+  --ink:#e2eae6; --muted:#93a29b; --faint:#6b7a74;
+  --mask:#4fb48f; --mask-ink:#05140e; --mask-soft:#1a2f27;
+  --copper:#de9a63; --lead:#5d6866;
+  --warn:#e6b450; --warn-bg:#352a12;
+  --danger:#f2857a; --danger-bg:#3a1714;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1311; --panel:#141c19; --sunk:#101715; --rule:#26312d;
+  --ink:#e2eae6; --muted:#93a29b; --faint:#6b7a74;
+  --mask:#4fb48f; --mask-ink:#05140e; --mask-soft:#1a2f27;
+  --copper:#de9a63; --lead:#5d6866;
+  --warn:#e6b450; --warn-bg:#352a12;
+  --danger:#f2857a; --danger-bg:#3a1714;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--mask);outline-offset:2px}
+
+/* ヘッダー */
+.top{display:flex;flex-direction:column;gap:14px}
+.title-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px}
+h1{margin:0;font-size:2rem;line-height:1.15;font-weight:700;letter-spacing:.01em}
+.sum{margin:0;color:var(--muted);font-size:.95rem}
+.sum b{color:var(--ink);font-family:var(--f-data);font-weight:600;font-variant-numeric:tabular-nums}
+.lowpill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);background:var(--panel);border-radius:999px;padding:3px 12px;font-size:.82rem;color:var(--muted)}
+.lowpill b{font-family:var(--f-data)}
+.lowpill.has{border-color:var(--warn);color:var(--warn);background:var(--warn-bg)}
+.lowpill.on{outline:2px solid var(--warn);outline-offset:1px}
+
+.comp{display:flex;gap:2px;height:12px;border-radius:3px;overflow:hidden}
+.comp button{border:0;padding:0;min-width:6px;height:100%;transition:opacity .15s}
+.comp.filtering button{opacity:.28}
+.comp.filtering button.on{opacity:1}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--rule);background:var(--panel);border-radius:999px;padding:4px 12px 4px 9px;font-size:.8rem;color:var(--muted)}
+.chip .n{font-family:var(--f-data);font-size:.74rem;color:var(--faint)}
+.chip.on{border-color:var(--mask);background:var(--mask-soft);color:var(--ink)}
+.chip.on .n{color:var(--mask)}
+.sw{width:10px;height:10px;border-radius:2px;flex:none;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 22%,transparent)}
+
+/* ツールバー */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{flex:1 1 260px;min-width:0;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:0 12px}
+.search input{border:0;background:transparent;padding:10px 0;width:100%;min-width:0;outline:none}
+.search svg{flex:none;color:var(--faint)}
+select.sort{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:9px 10px}
+.btn{border:1px solid var(--rule);background:var(--panel);border-radius:var(--r);padding:9px 14px;font-weight:500}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--mask);border-color:var(--mask);color:var(--mask-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.danger.armed{background:var(--danger);color:var(--panel)}
+
+/* 引き出し（カテゴリ） */
+.drawers{display:flex;flex-direction:column;gap:18px}
+.drawer{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r)}
+.drawer-h{position:sticky;top:env(safe-area-inset-top,0px);z-index:2;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--rule);border-radius:var(--r) var(--r) 0 0}
+.drawer-h .sw{width:12px;height:12px}
+.drawer-h h2{margin:0;font-size:.98rem;font-weight:700}
+.drawer-h .meta{margin-left:auto;font-size:.78rem;color:var(--faint);font-family:var(--f-data);font-variant-numeric:tabular-nums}
+
+.row{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,.55fr) minmax(0,.6fr) 148px;gap:14px;align-items:center;padding:10px 16px;border-top:1px solid var(--rule)}
+.drawer-h + .row, .rows > .row:first-child{border-top:0}
+.glyph{display:flex;align-items:center;justify-content:center;height:28px}
+.glyph svg{display:block;max-width:100%}
+.glyph .dot{width:10px;height:10px;border-radius:2px}
+.part{display:flex;flex-direction:column;align-items:flex-start;min-width:0;text-align:left;border:0;background:none;padding:0;gap:1px}
+.part .nm{font-weight:500;font-size:.98rem;overflow-wrap:anywhere}
+.part .sp{font-family:var(--f-data);font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.part:hover .nm{text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+.pkg{font-size:.82rem;color:var(--muted);overflow-wrap:anywhere;min-width:0}
+.loccell{min-width:0}
+.loc{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;border:1px solid var(--rule);background:var(--sunk);border-radius:4px;padding:1px 8px;overflow-wrap:anywhere;max-width:100%}
+.loc::before{content:"";width:6px;height:6px;border-radius:1px;background:var(--copper);flex:none}
+.loc.none{border-style:dashed;color:var(--faint);background:transparent}
+.loc.none::before{display:none}
+.qty{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.qty button{width:30px;height:30px;border:1px solid var(--rule);background:var(--sunk);border-radius:6px;font-family:var(--f-data);font-size:1rem;line-height:1}
+.qty button:hover{border-color:var(--mask);color:var(--mask)}
+.qty output{min-width:58px;text-align:right;font-family:var(--f-data);font-weight:600;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.qty output small{font-family:var(--f-body);font-weight:400;font-size:.7rem;color:var(--muted);margin-left:2px}
+.row.low .qty output{color:var(--warn)}
+.row.zero .qty output{color:var(--danger)}
+.flag{display:inline-block;font-size:.68rem;font-weight:500;border-radius:3px;padding:0 6px;margin-top:2px}
+.row.low .flag{background:var(--warn-bg);color:var(--warn)}
+.row.zero .flag{background:var(--danger-bg);color:var(--danger)}
+
+.empty{padding:44px 24px;text-align:center;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--rule);border-radius:var(--r)}
+.empty h2{margin:0;color:var(--ink);font-size:1.05rem}
+.empty p{margin:0;max-width:52ch}
+.empty .eg{font-family:var(--f-data);font-size:.8rem;background:var(--sunk);border:1px dashed var(--rule);border-radius:var(--r);padding:10px 14px;text-align:left;white-space:pre-wrap;max-width:100%}
+
+.foot{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;color:var(--muted);font-size:.78rem}
+.status{display:inline-flex;align-items:center;gap:6px}
+.dotst{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.dotst.ok{background:var(--mask)}
+.dotst.bad{background:var(--danger)}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:0}
+
+/* 編集パネル */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 40%,transparent);display:flex;align-items:flex-start;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px));overflow-y:auto;z-index:10}
+.sheet{background:var(--panel);border:1px solid var(--rule);border-radius:12px;width:100%;max-width:560px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 50px color-mix(in srgb,var(--ink) 25%,transparent)}
+.sheet h2{margin:0;font-size:1.1rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f.full{grid-column:1/-1}
+.f label{font-size:.75rem;color:var(--muted)}
+.f input,.f select,.f textarea{border:1px solid var(--rule);background:var(--sunk);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+.f textarea{resize:vertical;min-height:64px}
+.f input.data{font-family:var(--f-data)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+.actions .r{display:flex;gap:8px;margin-left:auto}
+.err{color:var(--danger);font-size:.8rem;margin:0}
+.hint{font-size:.8rem;color:var(--muted);margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:.85rem;z-index:20}
+
+body.ro #addBtn, body.ro #bulkBtn, body.ro .qty button, body.ro [data-act="add"], body.ro [data-act="bulk"]{display:none}
+body.ro .part{cursor:default}
+body.ro .part:hover .nm{text-decoration:none}
+
+@media (max-width:760px){
+  h1{font-size:1.6rem}
+  .row{grid-template-columns:56px minmax(0,1fr) auto;grid-template-areas:"g part qty" "g meta meta";row-gap:6px;column-gap:12px;padding:10px 12px}
+  .row .glyph{grid-area:g;align-self:start;height:24px}
+  .row .part{grid-area:part}
+  .row .qty{grid-area:qty}
+  .row .meta-wrap{grid-area:meta;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+  .drawer-h{padding:10px 12px}
+  .grid{grid-template-columns:1fr}
+}
+@media (min-width:761px){ .row .meta-wrap{display:contents} }
+@media (prefers-reduced-motion:no-preference){ .toast{animation:up .18s ease-out} @keyframes up{from{opacity:0;transform:translate(-50%,6px)}} }
+@media (prefers-reduced-motion:reduce){ .comp button{transition:none} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="title-row">
+      <h1>部品ストック</h1>
+      <p class="sum" id="sum">読み込み中</p>
+    </div>
+    <div class="comp" id="comp" aria-label="カテゴリ別の品目数"></div>
+    <div class="legend" id="legend"></div>
+  </header>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="部品名・型番・場所で検索（例: 10k, ESP32, 棚A）" autocomplete="off">
+    </label>
+    <select class="sort" id="sort" aria-label="並び順">
+      <option value="cat">カテゴリ別</option>
+      <option value="name">名前・値の順</option>
+      <option value="qtyAsc">在庫が少ない順</option>
+      <option value="recent">最近更新した順</option>
+      <option value="loc">保管場所順</option>
+    </select>
+    <button class="btn" id="bulkBtn" type="button">まとめて追加</button>
+    <button class="btn primary" id="addBtn" type="button">＋ 部品を追加</button>
+  </div>
+
+  <div class="drawers" id="list"><div class="empty"><h2>読み込み中…</h2></div></div>
+
+  <div class="foot">
+    <span class="status"><span class="dotst" id="dot"></span><span id="statusText">接続中</span></span>
+    <button class="linkbtn" id="csvBtn" type="button">CSVをコピー</button>
+  </div>
+</div>
+
+<div class="scrim" id="editScrim" hidden>
+  <form class="sheet" id="editForm" novalidate>
+    <h2 id="editTitle">部品を追加</h2>
+    <div class="grid">
+      <div class="f full"><label for="fName">部品名 *</label><input id="fName" required placeholder="例: 抵抗 10kΩ / ESP32-C3 SuperMini / タクトスイッチ"></div>
+      <div class="f"><label for="fCat">カテゴリ</label><select id="fCat"></select></div>
+      <div class="f"><label for="fSpec">値・型番</label><input id="fSpec" class="data" placeholder="例: 1/4W ±1%, 100µF 25V, 2SC1815"></div>
+      <div class="f"><label for="fPkg">形状・パッケージ</label><input id="fPkg" placeholder="例: リード, DIP-8, 0805, モジュール"></div>
+      <div class="f"><label for="fLoc">保管場所</label><input id="fLoc" list="locList" placeholder="例: 棚A-3, 青ケース"><datalist id="locList"></datalist></div>
+      <div class="f"><label for="fQty">数量</label><input id="fQty" type="number" min="0" step="1" inputmode="numeric" value="1"></div>
+      <div class="f"><label for="fUnit">単位</label><select id="fUnit"><option>個</option><option>本</option><option>枚</option><option>m</option><option>セット</option><option>袋</option></select></div>
+      <div class="f"><label for="fMin">これ以下で「残りわずか」</label><input id="fMin" type="number" min="0" step="1" inputmode="numeric" placeholder="未設定"></div>
+      <div class="f"><label for="fLink">データシート・購入先URL</label><input id="fLink" type="url" placeholder="https://"></div>
+      <div class="f full"><label for="fNote">メモ</label><textarea id="fNote" placeholder="例: 秋月で購入。DualSenseスタンドで2個使用予定"></textarea></div>
+    </div>
+    <p class="err" id="editErr" hidden></p>
+    <div class="actions">
+      <button class="btn danger" type="button" id="delBtn" hidden>削除</button>
+      <div class="r">
+        <button class="btn" type="button" id="cancelBtn">キャンセル</button>
+        <button class="btn primary" type="submit" id="saveBtn">保存</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="scrim" id="bulkScrim" hidden>
+  <form class="sheet" id="bulkForm" novalidate>
+    <h2>まとめて追加</h2>
+    <p class="hint">1行に1部品。カンマかタブ区切りで「部品名, 数量, カテゴリ, 値・型番, 保管場所」の順に書きます。数量以降は省略できます。表計算ソフトからの貼り付けもそのまま使えます。</p>
+    <div class="f full"><label for="bulkText">部品リスト</label><textarea id="bulkText" rows="9" class="data" placeholder="抵抗 10kΩ, 50, 抵抗, 1/4W, 棚A-1&#10;電解コンデンサ 100µF, 20, コンデンサ, 25V, 棚A-2&#10;Arduino Nano, 2, IC・マイコン, ATmega328P, 青ケース"></textarea></div>
+    <p class="err" id="bulkErr" hidden></p>
+    <div class="actions"><div class="r">
+      <button class="btn" type="button" id="bulkCancel">キャンセル</button>
+      <button class="btn primary" type="submit" id="bulkSave">追加する</button>
+    </div></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+  const CATS = [
+    {k:"抵抗",c:"#8a5a34"},
+    {k:"コンデンサ",c:"#c8322b"},
+    {k:"ダイオード・トランジスタ",c:"#e07b22"},
+    {k:"IC・マイコン",c:"#d9b21c"},
+    {k:"LED・ディスプレイ",c:"#2f9a5a"},
+    {k:"センサ",c:"#2f6fc4"},
+    {k:"モジュール・基板",c:"#7d4fb8"},
+    {k:"コネクタ・配線",c:"#8b9191"},
+    {k:"スイッチ・入力",c:"#e9e6dc"},
+    {k:"電源・電池",c:"#2a2a2a"},
+    {k:"モーター・駆動",c:"#b8733b"},
+    {k:"機構・ネジ",c:"#5f7d86"},
+    {k:"工具・消耗品",c:"#a5a07a"},
+    {k:"その他",c:"#b6bdb9"}
+  ];
+  const catColor = k => (CATS.find(c=>c.k===k)||{c:"#b6bdb9"}).c;
+  const catIndex = k => { const i = CATS.findIndex(c=>c.k===k); return i<0?99:i; };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s==null?"":s).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const fmt = n => Number(n).toLocaleString("ja-JP");
+
+  let db = null, col = null, parts = [], loaded = false, readOnly = false;
+  let filterCat = "", lowOnly = false;
+  const pending = {};
+
+  try { const s = localStorage.getItem("ps.sort"); if (s && $("sort").querySelector(`option[value="${s}"]`)) $("sort").value = s; } catch(e){}
+  $("fCat").innerHTML = CATS.map(c=>`<option>${esc(c.k)}</option>`).join("");
+
+  // ---- 値の読み取り（抵抗はΩ、コンデンサはF） ----
+  function ohms(s){
+    const m = String(s||"").match(/(\d+(?:\.\d+)?)\s*([kKmM]?)\s*Ω/);
+    if (!m) return null;
+    return parseFloat(m[1]) * ({"":1,k:1e3,K:1e3,m:1e6,M:1e6})[m[2]];
+  }
+  function farads(s){
+    const m = String(s||"").match(/(\d+(?:\.\d+)?)\s*([pnuµμ]?)F\b/);
+    if (!m) return null;
+    return parseFloat(m[1]) * ({"":1,p:1e-12,n:1e-9,u:1e-6,"µ":1e-6,"μ":1e-6})[m[2]];
+  }
+  function valueOf(p){
+    if (p._v !== undefined) return p._v;
+    let v = null;
+    if (p.category==="抵抗") v = ohms(p.name) ?? ohms(p.spec);
+    else if (p.category==="コンデンサ") v = farads(p.name) ?? farads(p.spec);
+    return v;
+  }
+  const cmpVal = (a,b)=>{ const va=valueOf(a), vb=valueOf(b); return (va!=null && vb!=null) ? va-vb : 0; };
+  const byName = (a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ja",{numeric:true});
+
+  // ---- 抵抗のカラーコード ----
+  const BAND = ["#1d1d1d","#7a4a26","#c8322b","#e07b22","#f0c419","#2f9a5a","#2f6fc4","#7d4fb8","#8b9191","#f4f4f0"];
+  const GOLD = "#c9a43a", SILVER = "#b8bcc0";
+  function bands(r, five){
+    const sig = five ? 3 : 2;
+    let exp = Math.floor(Math.log10(r) + 1e-9) - (sig-1);
+    let d = Math.round(r / Math.pow(10,exp));
+    if (d >= Math.pow(10,sig)) { d = Math.round(d/10); exp++; }
+    const digits = String(d).padStart(sig,"0").split("").map(Number).map(n=>BAND[n]);
+    const mult = exp >= 0 ? BAND[exp] : (exp === -1 ? GOLD : SILVER);
+    const tol = five ? BAND[1] : GOLD;
+    return digits.concat([mult, tol]);
+  }
+  function resistorSVG(p){
+    const r = valueOf(p); if (!r) return "";
+    const txt = [p.spec,p.notes].join(" ");
+    const five = /1%/.test(txt);
+    const metal = /金属皮膜/.test(txt);
+    const body = metal ? "#8fb2d6" : "#dcc9a0";
+    const cs = bands(r, five);
+    const x0 = 18, w = 36, step = five ? 5.4 : 6.6;
+    const stripes = cs.map((c,i)=>{
+      const last = i === cs.length-1;
+      const x = last ? x0 + w - 7 : x0 + 5 + i*step;
+      return `<rect x="${x.toFixed(1)}" y="3" width="3" height="12" fill="${c}"/>`;
+    }).join("");
+    return `<svg width="72" height="18" viewBox="0 0 72 18" role="img" aria-label="カラーコード"><line x1="0" y1="9" x2="72" y2="9" stroke="var(--lead)" stroke-width="1.6"/><rect x="${x0}" y="3" width="${w}" height="12" rx="5" fill="${body}"/>${stripes}</svg>`;
+  }
+  function glyph(p){
+    if (p.category==="抵抗"){ const s = resistorSVG(p); if (s) return s; }
+    return `<span class="dot sw" style="background:${catColor(p.category||"その他")}"></span>`;
+  }
+
+  // ---- 状態 ----
+  function qtyOf(p){ return pending[p.id] && pending[p.id].qty!=null ? pending[p.id].qty : (Number(p.qty)||0); }
+  function isLow(p){
+    const q = qtyOf(p); if (q<=0) return "zero";
+    if (p.minQty===null || p.minQty===undefined || p.minQty==="") return "";
+    const m = Number(p.minQty); return Number.isFinite(m) && q<=m ? "low" : "";
+  }
+  function setStatus(kind, text){ $("dot").className = "dotst " + (kind||""); $("statusText").textContent = text; }
+  let toastT; function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2200); }
+
+  function counts(){
+    const c = {}; parts.forEach(p=>{ const k=p.category||"その他"; c[k]=(c[k]||0)+1; });
+    return Object.keys(c).sort((a,b)=>catIndex(a)-catIndex(b)).map(k=>({k, n:c[k]}));
+  }
+
+  function renderHeader(){
+    if (!loaded){ return; }
+    const total = parts.reduce((a,p)=>a+qtyOf(p),0);
+    const low = parts.filter(p=>isLow(p)).length;
+    $("sum").innerHTML = `<b>${fmt(parts.length)}</b> 品目、合計 <b>${fmt(total)}</b> 個 <button type="button" class="lowpill ${low?"has":""} ${lowOnly?"on":""}" id="lowBtn" aria-pressed="${lowOnly}">残りわずか <b>${low}</b></button>`;
+    const cs = counts();
+    $("comp").className = "comp" + (filterCat ? " filtering" : "");
+    $("comp").innerHTML = cs.map(({k,n})=>`<button type="button" data-cat="${esc(k)}" class="${filterCat===k?"on":""}" style="flex:${n};background:${catColor(k)}" title="${esc(k)} ${n}品目" aria-label="${esc(k)}で絞り込む"></button>`).join("");
+    $("legend").innerHTML = `<button type="button" class="chip ${filterCat===""?"on":""}" data-cat="">すべて <span class="n">${parts.length}</span></button>` +
+      cs.map(({k,n})=>`<button type="button" class="chip ${filterCat===k?"on":""}" data-cat="${esc(k)}"><span class="sw" style="background:${catColor(k)}"></span>${esc(k)} <span class="n">${n}</span></button>`).join("");
+  }
+
+  function visible(){
+    const terms = $("q").value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    let arr = parts.filter(p=>{
+      if (filterCat && (p.category||"その他")!==filterCat) return false;
+      if (lowOnly && !isLow(p)) return false;
+      if (!terms.length) return true;
+      const hay = [p.name,p.spec,p.package,p.location,p.category,p.notes].join(" ").toLowerCase();
+      return terms.every(t=>hay.includes(t));
+    });
+    const s = $("sort").value;
+    const sameCatVal = (a,b)=> (a.category===b.category ? cmpVal(a,b) : 0);
+    arr.sort({
+      cat:(a,b)=>catIndex(a.category)-catIndex(b.category) || cmpVal(a,b) || byName(a,b),
+      name:(a,b)=>sameCatVal(a,b) || byName(a,b),
+      qtyAsc:(a,b)=>qtyOf(a)-qtyOf(b) || byName(a,b),
+      recent:(a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")),
+      loc:(a,b)=>String(a.location||"￿").localeCompare(String(b.location||"￿"),"ja",{numeric:true}) || byName(a,b)
+    }[s] || byName);
+    return arr;
+  }
+
+  function rowHTML(p){
+    const lv = isLow(p);
+    const flag = lv==="zero" ? `<span class="flag">在庫切れ</span>` : lv==="low" ? `<span class="flag">残りわずか</span>` : "";
+    return `<div class="row ${lv}" data-id="${esc(p.id)}">
+      <div class="glyph">${glyph(p)}</div>
+      <button type="button" class="part" data-act="edit" title="${readOnly?"":"編集"}"><span class="nm">${esc(p.name)}</span>${p.spec?`<span class="sp">${esc(p.spec)}</span>`:""}${flag}</button>
+      <div class="meta-wrap">
+        <span class="pkg">${esc(p.package||"")}</span>
+        <span class="loccell">${p.location?`<span class="loc">${esc(p.location)}</span>`:`<span class="loc none">場所未設定</span>`}</span>
+      </div>
+      <div class="qty">
+        <button type="button" data-act="dec" aria-label="${esc(p.name)} を1減らす">−</button>
+        <output>${fmt(qtyOf(p))}<small>${esc(p.unit||"個")}</small></output>
+        <button type="button" data-act="inc" aria-label="${esc(p.name)} を1増やす">＋</button>
+      </div>
+    </div>`;
+  }
+
+  function renderList(){
+    const list = $("list");
+    if (!loaded) return;
+    if (!parts.length){
+      list.innerHTML = `<div class="empty">
+        <h2>まだ部品が登録されていません</h2>
+        <p>「＋ 部品を追加」で1つずつ、または「まとめて追加」でリストを貼り付けて登録できます。チャットで Claude に手持ちの部品を伝えて、代わりに登録してもらうこともできます。</p>
+        <div class="eg">抵抗 10kΩ, 50, 抵抗, 1/4W, 棚A-1
+タクトスイッチ, 12, スイッチ・入力, 6×6mm, 棚B-2</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button class="btn" type="button" data-act="bulk">まとめて追加</button>
+          <button class="btn primary" type="button" data-act="add">＋ 部品を追加</button>
+        </div></div>`;
+      return;
+    }
+    const arr = visible();
+    if (!arr.length){
+      list.innerHTML = `<div class="empty"><h2>条件に合う部品がありません</h2><p>検索語やカテゴリの絞り込みを外してみてください。</p></div>`;
+      return;
+    }
+    if ($("sort").value === "cat"){
+      const groups = [];
+      arr.forEach(p=>{ const k=p.category||"その他"; let g=groups[groups.length-1]; if(!g||g.k!==k){ g={k,items:[]}; groups.push(g);} g.items.push(p); });
+      list.innerHTML = groups.map(g=>{
+        const sum = g.items.reduce((a,p)=>a+qtyOf(p),0);
+        return `<section class="drawer"><div class="drawer-h"><span class="sw" style="background:${catColor(g.k)}"></span><h2>${esc(g.k)}</h2><span class="meta">${g.items.length}品目 / ${fmt(sum)}</span></div>${g.items.map(rowHTML).join("")}</section>`;
+      }).join("");
+    } else {
+      list.innerHTML = `<section class="drawer"><div class="rows">${arr.map(rowHTML).join("")}</div></section>`;
+    }
+  }
+
+  function renderLocs(){
+    const locs = [...new Set(parts.map(p=>p.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
+    $("locList").innerHTML = locs.map(l=>`<option value="${esc(l)}"></option>`).join("");
+  }
+  function render(){ renderHeader(); renderList(); renderLocs(); }
+
+  // ---- 在庫の増減（連打は1回の書き込みにまとめる） ----
+  function bump(id, d){
+    if (!col) return;
+    const p = parts.find(x=>x.id===id); if (!p) return;
+    const st = pending[id] || (pending[id] = {qty:null, timer:null, chain:Promise.resolve()});
+    st.qty = Math.max(0, qtyOf(p) + d);
+    render();
+    clearTimeout(st.timer);
+    st.timer = setTimeout(()=>{
+      const v = st.qty;
+      st.chain = st.chain.then(()=>col.doc(id).update({qty:v, updatedAt:new Date().toISOString()}))
+        .then(()=>{ if (st.qty===v){ delete pending[id]; } })
+        .catch(e=>{ delete pending[id]; render(); toast(writeErr(e)); });
+    }, 600);
+  }
+  function writeErr(e){
+    const c = e && e.code;
+    if (c==="invalid_argument") return "この画面では編集できません（閲覧のみの権限です）";
+    if (c==="quota_exceeded") return "保存容量の上限に達しました。不要な部品を削除してください";
+    if (c==="resource_exhausted") return "操作が多すぎます。少し待ってからもう一度試してください";
+    return "保存できませんでした。通信状態を確認してもう一度試してください";
+  }
+
+  // ---- 編集パネル ----
+  let editingId = null, delArmed = false;
+  function openEdit(p){
+    editingId = p ? p.id : null; delArmed = false;
+    $("editTitle").textContent = p ? "部品を編集" : "部品を追加";
+    $("fName").value = p ? p.name||"" : "";
+    if (p && p.category && !CATS.some(c=>c.k===p.category) && ![...$("fCat").options].some(o=>o.value===p.category)) { const o=document.createElement("option"); o.textContent=p.category; $("fCat").appendChild(o); }
+    $("fCat").value = p && p.category ? p.category : (filterCat||CATS[0].k);
+    $("fSpec").value = p ? p.spec||"" : "";
+    $("fPkg").value = p ? p.package||"" : "";
+    $("fLoc").value = p ? p.location||"" : "";
+    $("fQty").value = p ? qtyOf(p) : 1;
+    $("fUnit").value = p && p.unit ? p.unit : "個";
+    $("fMin").value = p && p.minQty!=null && p.minQty!=="" ? p.minQty : "";
+    $("fLink").value = p ? p.link||"" : "";
+    $("fNote").value = p ? p.notes||"" : "";
+    $("delBtn").hidden = !p; $("delBtn").textContent="削除"; $("delBtn").classList.remove("armed");
+    $("editErr").hidden = true;
+    $("editScrim").hidden = false;
+    setTimeout(()=>$("fName").focus(),30);
+  }
+  function closeEdit(){ $("editScrim").hidden = true; editingId=null; }
+
+  $("editForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const name = $("fName").value.trim();
+    if (!name){ $("editErr").textContent="部品名を入力してください"; $("editErr").hidden=false; $("fName").focus(); return; }
+    if (!col){ $("editErr").textContent="保存先に接続できていません。ページを開き直してください"; $("editErr").hidden=false; return; }
+    const minRaw = $("fMin").value.trim();
+    const data = {
+      name, category:$("fCat").value, spec:$("fSpec").value.trim(), package:$("fPkg").value.trim(),
+      location:$("fLoc").value.trim(), qty:Math.max(0, parseInt($("fQty").value,10)||0), unit:$("fUnit").value,
+      minQty: minRaw===""?null:Math.max(0,parseInt(minRaw,10)||0), link:$("fLink").value.trim(), notes:$("fNote").value.trim(),
+      updatedAt:new Date().toISOString()
+    };
+    $("saveBtn").disabled = true;
+    try{
+      if (editingId){ delete pending[editingId]; await col.doc(editingId).update(data); toast("保存しました"); }
+      else { data.createdAt = data.updatedAt; await col.add(data); toast("追加しました"); }
+      closeEdit();
+    }catch(err){ $("editErr").textContent = writeErr(err); $("editErr").hidden=false; }
+    finally{ $("saveBtn").disabled=false; }
+  });
+  $("cancelBtn").onclick = closeEdit;
+  $("delBtn").onclick = async ()=>{
+    if (!delArmed){ delArmed=true; $("delBtn").textContent="もう一度押すと削除"; $("delBtn").classList.add("armed"); return; }
+    try{ await col.doc(editingId).delete(); toast("削除しました"); closeEdit(); }
+    catch(err){ $("editErr").textContent = writeErr(err); $("editErr").hidden=false; }
+  };
+
+  // ---- まとめて追加 ----
+  function openBulk(){ $("bulkErr").hidden=true; $("bulkScrim").hidden=false; setTimeout(()=>$("bulkText").focus(),30); }
+  $("bulkCancel").onclick = ()=>{ $("bulkScrim").hidden=true; };
+  $("bulkForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    if (!col){ $("bulkErr").textContent="保存先に接続できていません"; $("bulkErr").hidden=false; return; }
+    const lines = $("bulkText").value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    if (!lines.length){ $("bulkErr").textContent="部品を1行以上入力してください"; $("bulkErr").hidden=false; return; }
+    const rows = lines.map(l=>l.split(/\t|,|、|，/).map(s=>s.trim()));
+    $("bulkSave").disabled = true;
+    let ok = 0;
+    try{
+      for (const r of rows){
+        if (!r[0]) continue;
+        const now = new Date().toISOString();
+        const cat = r[2] ? (CATS.find(c=>c.k===r[2]||c.k.includes(r[2]))||{k:r[2]}).k : "その他";
+        await col.add({name:r[0], qty:Math.max(0,parseInt(r[1],10)||0), category:cat, spec:r[3]||"", location:r[4]||"", unit:"個", minQty:null, createdAt:now, updatedAt:now});
+        ok++;
+      }
+      $("bulkText").value=""; $("bulkScrim").hidden=true; toast(`${ok}件追加しました`);
+    }catch(err){ $("bulkErr").textContent = `${ok}件追加したところで止まりました。` + writeErr(err); $("bulkErr").hidden=false; }
+    finally{ $("bulkSave").disabled=false; }
+  });
+
+  // ---- CSVコピー ----
+  $("csvBtn").onclick = ()=>{
+    const head = ["部品名","カテゴリ","値・型番","形状","保管場所","数量","単位","下限","URL","メモ"];
+    const q = v=>{ const s=String(v==null?"":v); return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
+    const csv = [head.join(",")].concat(visible().map(p=>[p.name,p.category,p.spec,p.package,p.location,qtyOf(p),p.unit,p.minQty,p.link,p.notes].map(q).join(","))).join("\n");
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(csv).then(()=>toast("CSVをコピーしました")).catch(()=>toast("コピーできませんでした"));
+    } else toast("コピーできませんでした");
+  };
+
+  // ---- イベント ----
+  document.addEventListener("click", e=>{
+    if (e.target.closest("#lowBtn")){ lowOnly=!lowOnly; render(); return; }
+    const cat = e.target.closest("[data-cat]");
+    if (cat){ const k = cat.dataset.cat; filterCat = (filterCat===k && k!=="") ? "" : k; render(); return; }
+    const a = e.target.closest("[data-act]");
+    if (a){
+      if (readOnly) return;
+      const act = a.dataset.act, row = a.closest(".row"), id = row && row.dataset.id;
+      if (act==="add") openEdit(null);
+      else if (act==="bulk") openBulk();
+      else if (act==="edit") openEdit(parts.find(p=>p.id===id));
+      else if (act==="inc") bump(id, 1);
+      else if (act==="dec") bump(id, -1);
+    }
+  });
+  $("addBtn").onclick = ()=>{ if(!readOnly) openEdit(null); };
+  $("bulkBtn").onclick = ()=>{ if(!readOnly) openBulk(); };
+  $("q").addEventListener("input", renderList);
+  $("sort").addEventListener("change", ()=>{ try{localStorage.setItem("ps.sort",$("sort").value);}catch(e){} renderList(); });
+  document.addEventListener("keydown", e=>{ if (e.key==="Escape"){ $("editScrim").hidden=true; $("bulkScrim").hidden=true; } });
+  ["editScrim","bulkScrim"].forEach(id=>$(id).addEventListener("click", e=>{ if (e.target.id===id) $(id).hidden=true; }));
+
+  // ---- 接続 ----
+  async function start(){
+    try{ db = window.claude && window.claude.use ? await window.claude.use("db") : null; }catch(e){ db=null; }
+    if (!db){
+      // claude.ai の外（GitHub Pages など）では、リポジトリのバックアップを閲覧専用で表示する
+      try{
+        const res = await fetch("data/parts.json", {cache:"no-store"});
+        if (!res.ok) throw new Error(res.status);
+        const json = await res.json();
+        parts = (json.parts||[]).map(p=>Object.assign({}, p));
+        parts.forEach(p=>{ p._v = valueOf(p); });
+        readOnly = true; document.body.classList.add("ro");
+        loaded = true; setStatus("", `閲覧専用：${json.exportedAt ? new Date(json.exportedAt).toLocaleDateString("ja-JP") : ""}時点のバックアップ`);
+        render(); return;
+      }catch(e){}
+      loaded = true; parts = []; setStatus("bad","保存先に接続できません");
+      render(); $("list").innerHTML = `<div class="empty"><h2>在庫データを読み込めません</h2><p>claude.ai にサインインした状態で開くと、在庫の表示と編集ができます。</p></div>`;
+      $("sum").textContent = "";
+      return;
+    }
+    col = db.collection("parts");
+    col.onSnapshot(snap=>{
+      parts = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      parts.forEach(p=>{ p._v = valueOf(p); });
+      loaded = true; setStatus("ok", snap.metadata && snap.metadata.fromCache ? "同期中" : "保存済み・自動で同期");
+      render();
+    }, ()=>{ setStatus("bad","同期が止まりました。ページを開き直してください"); });
+  }
+  start();
+})();
+</script>
